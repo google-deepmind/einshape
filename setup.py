@@ -45,7 +45,7 @@ def einshape_test_suite():
 setup(
     name='einshape',
     version='1.0',
-    description='A library to verify robustness of deep neural networks.',
+    description='DSL-based reshaping library for JAX and other frameworks',
     url='https://github.com/deepmind/einshape',
     author='DeepMind',
     author_email='no-reply@google.com',
