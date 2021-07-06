@@ -48,7 +48,7 @@ setup(
     description='DSL-based reshaping library for JAX and other frameworks',
     url='https://github.com/deepmind/einshape',
     author='DeepMind',
-    author_email='no-reply@google.com',
+    author_email='noreply@google.com',
     # Contained modules and scripts.
     packages=find_packages(),
     install_requires=REQUIRED_PACKAGES,

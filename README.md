@@ -25,4 +25,45 @@ See `jax_ops.py` for the JAX implementation of the `einshape` function.
 Alternatively, the parser and engine are exposed in `engine.py` allowing
 analogous implementations in TensorFlow or other frameworks.
 
+## Installation
+
+Einshape can be installed with the following command:
+
+```bash
+pip install git+https://github.com/deepmind/einshape
+```
+
+Einshape will work with either Jax or TensorFlow. To allow for that it does not
+list either as a requirement, so it is necessary to ensure that Jax or
+TensorFlow is installed separately.
+
+## Usage
+
+Jax version:
+
+```py
+from einshape import jax_einshape as einshape
+from jax import numpy as jnp
+
+a = jnp.array([[1, 2], [3, 4]])
+b = einshape("ij->(ij)", a)
+# b is [1, 2, 3, 4]
+```
+
+TensorFlow version:
+
+```py
+from einshape import tf_einshape as einshape
+import tensorflow as tf
+
+a = tf.constant([[1, 2], [3, 4]])
+b = einshape("ij->(ij)", a)
+# b is [1, 2, 3, 4]
+```
+
+## Disclaimer
+
+This is not an official Google product.
+
 ![Einshape Logo](einshape-logo.png)
+

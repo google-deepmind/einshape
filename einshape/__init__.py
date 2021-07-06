@@ -28,5 +28,18 @@ at `src/tensorflow/tf_ops.py`.
 
 from einshape.src import abstract_ops
 from einshape.src import backend
-from einshape.src.jax.jax_ops import einshape
-from einshape.src.tensorflow.tf_ops import einshape as tf_einshape
+
+try:
+  # pylint: disable=g-import-not-at-top
+  from einshape.src.jax.jax_ops import einshape as jax_einshape
+except ImportError:
+  # Jax not installed. Skip the Jax version.
+  pass
+
+try:
+  # pylint: disable=g-import-not-at-top
+  from einshape.src.tensorflow.tf_ops import einshape as tf_einshape
+except ImportError:
+  # TensorFlow not installed. Skip the TensorFlow version.
+  pass
+
