@@ -30,7 +30,7 @@ analogous implementations in TensorFlow or other frameworks.
 Einshape can be installed with the following command:
 
 ```bash
-pip install git+https://github.com/deepmind/einshape
+pip3 install git+https://github.com/deepmind/einshape
 ```
 
 Einshape will work with either Jax or TensorFlow. To allow for that it does not
