@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright 2021 DeepMind Technologies Limited.
+# Copyright 2022 DeepMind Technologies Limited.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,20 +26,78 @@ analogous implementations in other frameworks; see TensorFlow implementation
 at `src/tensorflow/tf_ops.py`.
 """
 
+import typing
+from typing import Any, Union
 from einshape.src import abstract_ops
 from einshape.src import backend
 
-try:
-  # pylint: disable=g-import-not-at-top
-  from einshape.src.jax.jax_ops import einshape as jax_einshape
-except ImportError:
-  # Jax not installed. Skip the Jax version.
-  pass
+if typing.TYPE_CHECKING:
+  import jax.numpy as jnp
+  import numpy as np
+  import tensorflow as tf
 
-try:
-  # pylint: disable=g-import-not-at-top
-  from einshape.src.tensorflow.tf_ops import einshape as tf_einshape
-except ImportError:
-  # TensorFlow not installed. Skip the TensorFlow version.
-  pass
 
+def jax_einshape(
+    equation: str,
+    value: Union['jnp.ndarray', Any],
+    **index_sizes: int,
+) -> 'jnp.ndarray':
+  """Reshapes `value` according to the given Shape Equation.
+
+  Args:
+    equation: The Shape Equation specifying the index regrouping and reordering.
+    value: Input tensor, or tensor-like object.
+    **index_sizes: Sizes of indices, where they cannot be inferred from
+      `input_shape`.
+
+  Returns:
+    Tensor derived from `value` by reshaping as specified by `equation`.
+  """
+  import einshape.src.jax.jax_ops  # pylint:disable=g-import-not-at-top
+  global jax_einshape
+  jax_einshape = einshape.src.jax.jax_ops.einshape  # pytype:disable=module-attr
+  return jax_einshape(equation, value, **index_sizes)
+
+
+def numpy_einshape(
+    equation: str,
+    value: Union['np.ndarray', Any],
+    **index_sizes: int,
+) -> 'np.ndarray':
+  """Reshapes `value` according to the given Shape Equation.
+
+  Args:
+    equation: The Shape Equation specifying the index regrouping and reordering.
+    value: Input tensor, or tensor-like object.
+    **index_sizes: Sizes of indices, where they cannot be inferred from
+      `input_shape`.
+
+  Returns:
+    Tensor derived from `value` by reshaping as specified by `equation`.
+  """
+  import einshape.src.numpy.numpy_ops  # pylint:disable=g-import-not-at-top
+  global numpy_einshape
+  numpy_einshape = einshape.src.numpy.numpy_ops.einshape  # pytype:disable=module-attr
+  return numpy_einshape(equation, value, **index_sizes)
+
+
+def tf_einshape(
+    equation: str,
+    x: Union['tf.Tensor', Any],
+    **index_sizes: Union[int, 'tf.Tensor'],
+) -> 'tf.Tensor':
+  """Reshapes `x` according to the given Shape Equation.
+
+  Args:
+    equation: The Shape Equation specifying the index regrouping and reordering.
+    x: Input tensor, or tensor-like object.
+    **index_sizes: Sizes of indices, where they cannot be inferred from
+      `input_shape`.
+
+  Returns:
+    Tensor derived from `x` by reshaping as specified by `equation`.
+  """
+  import einshape.src.tensorflow.tf_ops  # pylint:disable=g-import-not-at-top
+  global tf_einshape
+  tf_einshape = einshape.src.tensorflow.tf_ops.einshape  # pytype:disable=module-attr
+  return tf_einshape(equation, x, **index_sizes)

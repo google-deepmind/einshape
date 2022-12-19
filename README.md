@@ -61,6 +61,17 @@ b = einshape("ij->(ij)", a)
 # b is [1, 2, 3, 4]
 ```
 
+Numpy version:
+
+```py
+from einshape import numpy_einshape as einshape
+import numpy as np
+
+a = np.array([[1, 2], [3, 4]])
+b = einshape("ij->(ij)", a)
+# b is [1, 2, 3, 4]
+```
+
 ## Understanding einshape equations
 
 An einshape equation is always of the form `{lhs}->{rhs}`, where `{lhs}` and

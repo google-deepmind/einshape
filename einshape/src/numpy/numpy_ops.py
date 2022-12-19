@@ -19,34 +19,32 @@ from typing import Any, Union
 
 from einshape.src import abstract_ops
 from einshape.src import backend
-from jax import lax
-import jax.numpy as jnp
+import numpy as np
 
 
-class _JaxBackend(backend.Backend[jnp.ndarray]):
-  """Jax implementation of reshaping ops."""
+class _NumpyBackend(backend.Backend[np.ndarray]):
+  """Numpy implementation of reshaping ops."""
 
-  def reshape(self, x: jnp.ndarray, op: abstract_ops.Reshape) -> jnp.ndarray:
-    return jnp.reshape(x, op.shape)
+  def reshape(self, x: np.ndarray, op: abstract_ops.Reshape) -> np.ndarray:
+    return np.reshape(x, op.shape)
 
   def transpose(
-      self, x: jnp.ndarray, op: abstract_ops.Transpose)-> jnp.ndarray:
-    return jnp.transpose(x, axes=op.perm)
+      self, x: np.ndarray, op: abstract_ops.Transpose)-> np.ndarray:
+    return np.transpose(x, axes=op.perm)
 
   def broadcast(
-      self, x: jnp.ndarray, op: abstract_ops.Broadcast) -> jnp.ndarray:
-    shape = op.transform_shape(x.shape)
-    # For each input dimension, lax needs to know which output dimension it
-    # corresponds to.
-    broadcast_dims = [j for j in range(len(shape)) if j not in op.axis_sizes]
-    return lax.broadcast_in_dim(x, shape, broadcast_dims)
+      self, x: np.ndarray, op: abstract_ops.Broadcast) -> np.ndarray:
+    desired_shape = op.transform_shape(x.shape)
+    new_axis_indices = tuple(sorted(op.axis_sizes.keys()))
+    x = np.expand_dims(x, axis=new_axis_indices)
+    return np.broadcast_to(x, desired_shape)
 
 
 def einshape(
     equation: str,
-    value: Union[jnp.ndarray, Any],
+    value: Union[np.ndarray, Any],
     **index_sizes: int
-    ) -> jnp.ndarray:
+    ) -> np.ndarray:
   """Reshapes `value` according to the given Shape Equation.
 
   Args:
@@ -58,6 +56,6 @@ def einshape(
   Returns:
     Tensor derived from `value` by reshaping as specified by `equation`.
   """
-  if not isinstance(value, jnp.ndarray):
-    value = jnp.array(value)
-  return _JaxBackend().exec(equation, value, value.shape, **index_sizes)
+  if not isinstance(value, np.ndarray):
+    value = np.array(value)
+  return _NumpyBackend().exec(equation, value, value.shape, **index_sizes)

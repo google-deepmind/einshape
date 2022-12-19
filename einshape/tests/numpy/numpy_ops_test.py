@@ -18,9 +18,8 @@
 from typing import Any, Mapping, Sequence
 from absl.testing import absltest
 from absl.testing import parameterized
-from einshape.src.jax import jax_ops
+from einshape.src.numpy import numpy_ops
 from einshape.tests import test_cases
-import jax.numpy as jnp
 import numpy as np
 
 
@@ -29,13 +28,13 @@ class EngineTest(parameterized.TestCase):
   @parameterized.named_parameters(test_cases.TEST_CASES)
   def test_common(self, x: Sequence[Any], equation: str,
                   index_sizes: Mapping[str, int], expected: Sequence[Any]):
-    x = jnp.array(x)
-    y = jax_ops.einshape(equation, x, **index_sizes)
+    x = np.array(x)
+    y = numpy_ops.einshape(equation, x, **index_sizes)
     np.testing.assert_array_equal(np.array(expected), y)
 
   def test_accepts_python_list(self):
     x = [3, 5]  # Python list, not a JAX tensor.
-    y = jax_ops.einshape('i->i1', x)
+    y = numpy_ops.einshape('i->i1', x)
     np.testing.assert_array_equal(np.array([[3], [5]]), y)
 
 
